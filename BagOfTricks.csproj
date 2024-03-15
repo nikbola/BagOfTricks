@@ -19,4 +19,14 @@
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="lib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>C:\Users\LarsN\Documents\Programming\Tyranny Mods\Bag of Tricks\BagOfTricks\lib\Assembly-CSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

@@ -58,12 +58,11 @@ namespace BagOfTricks.UI
 
 
         #region Cheat Settings
-        public static void DrawCheatSettings()
+        private static void DrawCheatSettings()
         {
             if (!cheatsExpanded)
                 return;
             GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
-
             GUILayout.BeginHorizontal();
 
             Templates.Toggle.Draw("Block Telemetry (Requires Restart)", value: ref Serialized.BlockTelemetry);
@@ -72,7 +71,6 @@ namespace BagOfTricks.UI
             Templates.Button.DrawRounded("Kill All Enemies", onClick: Cheats.KillAllEnemies);
             
             GUILayout.EndHorizontal();
-
             GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
@@ -83,14 +81,12 @@ namespace BagOfTricks.UI
             Templates.Button.DrawRounded("Clear Fog", onClick: Cheats.ClearFogOfWar);
 
             GUILayout.EndHorizontal();
-
             GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
             Templates.Toggle.Draw("Enable Invisibility", value: ref Serialized.InvisibilityEnabled);
 
             GUILayout.EndHorizontal();
-
             GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
@@ -103,6 +99,17 @@ namespace BagOfTricks.UI
 
             GUILayout.EndHorizontal();
         }
+        #endregion
+
+        #region Stats Settings
+        private static void DrawStatsSettings()
+        {
+            if (!statsExpanded)
+                return;
+
+
+        }
+
         #endregion
     }
 }
