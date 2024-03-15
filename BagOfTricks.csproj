@@ -26,7 +26,13 @@
 
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>C:\Users\LarsN\Documents\Programming\Tyranny Mods\Bag of Tricks\BagOfTricks\lib\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\lib\Assembly-CSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\lib\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

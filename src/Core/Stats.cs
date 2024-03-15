@@ -1,26 +1,23 @@
 ﻿using Game;
+using System.Linq;
 
 namespace BagOfTricks.Core
 {
     internal static class Stats
     {
-        public static object[] partyMembers;
+        public static PartyMemberAI[] partyMembers;
 
-        public static object[] GetPartyMembers()
+        public static PartyMemberAI[] GetPartyMembers()
         {
             if (partyMembers != null && partyMembers.Length > 0)
             {
                 return partyMembers;
             }
-            else
-            {
-                object[] arr = UnityEngine.Object.FindObjectsOfType(typeof(PartyMemberAI));
-                if (arr == null || arr.Length == 0)
-                {
-                    return null;
-                }
-                return arr;
-            }
+
+            return UnityEngine.Object
+                .FindObjectsOfType(typeof(PartyMemberAI))
+                .Cast<PartyMemberAI>()
+                .ToArray();
         }
     }
 }

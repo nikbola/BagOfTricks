@@ -1,6 +1,7 @@
 ﻿using BagOfTricks.Core;
 using BagOfTricks.Debug;
 using BagOfTricks.Storage;
+using Game;
 using System;
 using System.Reflection.Emit;
 using UnityEngine;
@@ -107,7 +108,14 @@ namespace BagOfTricks.UI
             if (!statsExpanded)
                 return;
 
+            Templates.Button.DrawRounded("Get Party Members", () => {
 
+                PartyMemberAI[] partyMembers = Stats.GetPartyMembers();
+                for (int i = 0; i < partyMembers.Length; i++)
+                {
+                    Debug.Logger.Write<Info>(partyMembers[i].name);
+                }
+            });
         }
 
         #endregion
