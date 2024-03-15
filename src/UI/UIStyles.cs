@@ -46,7 +46,7 @@ namespace BagOfTricks
         public static Texture2D toggleTexture;
         public static Texture2D rectButtonTexture;
         public static Texture2D rectTextFieldTexture;
-        public static Texture2D headerTexture;
+        public static Texture2D squareTexture;
 
         public static void Initialize()
         {
@@ -83,8 +83,8 @@ namespace BagOfTricks
             _labelStyle.fontStyle = FontStyle.Bold;
 
             _buttonStyle = new GUIStyle();
-            headerTexture = UI.GUIUtility.CreateTexture(1, 1, LighterDark);
-            _buttonStyle.normal.background = headerTexture;
+            squareTexture = UI.GUIUtility.CreateTexture(1, 1, LighterDark);
+            _buttonStyle.normal.background = squareTexture;
             _buttonStyle.normal.textColor = Color.white;
             _buttonStyle.fontStyle = FontStyle.Bold;
             _buttonStyle.alignment = TextAnchor.MiddleCenter;

@@ -21,7 +21,6 @@ namespace BagOfTricks.UI
                 for (int y = 0; y < originalTexture.height; y++)
                 {
                     Color originalColor = originalTexture.GetPixel(x, y);
-                    // Apply the new color but preserve the original alpha value
                     coloredTexture.SetPixel(x, y, new Color(color.r, color.g, color.b, originalColor.a));
                 }
             }

@@ -67,7 +67,7 @@ namespace BagOfTricks.UI
             GUILayout.ExpandWidth(false);
             GUISkin skin = GUI.skin;
             skin.verticalScrollbarThumb = new GUIStyle();
-            Texture2D texture = UI.GUIUtility.CreateColoredTexture(UIStyles.headerTexture, UIStyles.DarkPurple);
+            Texture2D texture = UI.GUIUtility.CreateColoredTexture(UIStyles.squareTexture, UIStyles.DarkPurple);
             skin.verticalScrollbarThumb.normal.background = texture;
             NonSerialized.ScrollPosition = GUILayout.BeginScrollView(NonSerialized.ScrollPosition);
 
@@ -151,7 +151,7 @@ namespace BagOfTricks.UI
                 GUIStyle nameLabelStyle = new(UIStyles.LabelStyle);
                 nameLabelStyle.alignment = TextAnchor.MiddleCenter;
                 nameLabelStyle.margin.left = (int)UIStyles.DefaultHeaderLabelWidth;
-                nameLabelStyle.normal.background = UIStyles.headerTexture;
+                nameLabelStyle.normal.background = UIStyles.squareTexture;
 
                 GUILayout.Label(cNames[i], nameLabelStyle, GUILayout.Width(500f), GUILayout.Height(UIStyles.DefaultCategoryElementHeight));
                 GUILayout.Label("Attributes:", UIStyles.LabelStyle, GUILayout.Width(250f), GUILayout.Height(UIStyles.DefaultCategoryElementHeight));
