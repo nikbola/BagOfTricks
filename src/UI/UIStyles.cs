@@ -14,12 +14,18 @@ namespace BagOfTricks
         public static readonly Color MainPurple = new(0.77f, 0.58f, 1f);
         public static readonly Color DarkPurple = new(0.2f, 0.18f, 0.23f);
         public static readonly Color Turquoise = new(0.08f, 0.86f, 0.78f);
+        
+        public static readonly Color ErrorRed = new(0.95f, 0.34f, 0.44f);
+        public static readonly Color WarningYellow = new(0.95f, 0.88f, 0.58f);
+        public static readonly Color SuccessGreen = new(0.52f, 0.83f, 0.76f);
+
         public static readonly Color ButtonPurpleHighlight = new(0.20f, 0.20f, 0.28f);
         public static readonly Color ButtonPurpleSelected = new(0.16f, 0.16f, 0.24f);
         #endregion
 
         #region GUIStyles
         private static GUIStyle _windowStyle;
+        private static GUIStyle _topBarButtonStyle;
         private static GUIStyle _headerLabelStyle;
         private static GUIStyle _labelStyle;
         private static GUIStyle _buttonStyle;
@@ -29,6 +35,7 @@ namespace BagOfTricks
         private static GUIStyle _toggleStyle;
         private static GUIStyle _toggleStyleEnabled;
         private static GUIStyle _textFieldStyle;
+        private static GUIStyle _logStyle;
         #endregion
 
         #region Dimensions
@@ -47,6 +54,8 @@ namespace BagOfTricks
         public static Texture2D rectButtonTexture;
         public static Texture2D rectTextFieldTexture;
         public static Texture2D squareTexture;
+        public static Texture2D scrollThumbTexture;
+        public static Texture2D scrollBackgroundTexture;
 
         public static void Initialize()
         {
@@ -69,6 +78,13 @@ namespace BagOfTricks
 
             _windowStyle = new GUIStyle();
             _windowStyle.normal.background = UI.GUIUtility.CreateTexture(1, 1, MainDark);
+
+            _topBarButtonStyle = new GUIStyle();
+            _topBarButtonStyle.normal.background = UI.GUIUtility.CreateTexture(1, 1, LighterDark);
+            _topBarButtonStyle.normal.textColor = Color.white;
+            _topBarButtonStyle.alignment = TextAnchor.MiddleCenter;
+            _topBarButtonStyle.fontStyle = FontStyle.Bold;
+            _topBarButtonStyle.fontSize = 22;
 
             _headerLabelStyle = new GUIStyle();
             _headerLabelStyle.normal.textColor = Color.white;
@@ -125,11 +141,30 @@ namespace BagOfTricks
             _textFieldStyle.padding.left = 5;
             _textFieldStyle.padding.right = 5;
             _textFieldStyle.margin.right = 25;
+
+            _logStyle = new GUIStyle();
+            _logStyle.normal.background = UI.GUIUtility.CreateTexture(1, 1, LighterDark);
+            _logStyle.fontSize = 18;
+            _logStyle.alignment = TextAnchor.MiddleLeft;
+            _logStyle.margin.left = 10;
+            _logStyle.margin.right = 10;
+            _logStyle.padding.left = 10;
+            _logStyle.padding.right = 10;
+            _logStyle.padding.top = 15;
+            _logStyle.padding.bottom = 15;
+
+            scrollThumbTexture = UI.GUIUtility.CreateColoredTexture(squareTexture, DarkPurple);
+            scrollBackgroundTexture = UI.GUIUtility.CreateColoredTexture(squareTexture, DarkestDark);
         }
 
         public static GUIStyle WindowStyle
         {
             get { return _windowStyle; }
+        }
+
+        public static GUIStyle TopBarButtonStyle
+        {
+            get { return _topBarButtonStyle; }
         }
 
         public static GUIStyle HeaderLabelStyle
@@ -177,8 +212,10 @@ namespace BagOfTricks
             get { return _textFieldStyle; }
         }
 
-
-        
+        public static GUIStyle LogStyle
+        {
+            get { return _logStyle; }
+        }
     }
 }
 

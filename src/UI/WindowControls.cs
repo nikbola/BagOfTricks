@@ -2,9 +2,8 @@
 using BagOfTricks.Debug;
 using BagOfTricks.Extensions;
 using BagOfTricks.Storage;
-using Game;
-using SDK;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BagOfTricks.UI
@@ -64,13 +63,65 @@ namespace BagOfTricks.UI
 
         private void DrawWindow(int windowID)
         {
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Main", UIStyles.TopBarButtonStyle, GUILayout.Height(60)))
+            {
+                NonSerialized.SelectedTopBarCategory = NonSerialized.TopBarCategory.Main;
+            }
+
+            Rect mainButtonRect = default;
+            Rect logsButtonRect = default;
+
+            if (Event.current.type == EventType.Repaint)
+            {
+                mainButtonRect = GUILayoutUtility.GetLastRect();
+            }
+
+            var separatorRect = new Rect(mainButtonRect.xMax, mainButtonRect.y, 2, mainButtonRect.height);
+
+            if (GUILayout.Button("Logs", UIStyles.TopBarButtonStyle, GUILayout.Height(60)))
+            {
+                NonSerialized.SelectedTopBarCategory = NonSerialized.TopBarCategory.Logs;
+            }
+
+            if (Event.current.type == EventType.repaint)
+            {
+                logsButtonRect = GUILayoutUtility.GetLastRect();
+            }
+
+            bool isMainSelected = NonSerialized.SelectedTopBarCategory == NonSerialized.TopBarCategory.Main;
+            Rect selectedRect = isMainSelected ? mainButtonRect : logsButtonRect;
+
+            GUI.color = UIStyles.DarkestDark;
+            GUI.DrawTexture(separatorRect, Texture2D.whiteTexture);
+            GUI.color = Color.white;
+
+            var selectionRect = new Rect(selectedRect.x, selectedRect.yMax - 1, selectedRect.width, 2);
+            GUI.color = UIStyles.MainPurple;
+            GUI.DrawTexture(selectionRect, Texture2D.whiteTexture);
+            GUI.color = Color.white;
+
+            GUILayout.EndHorizontal();
+
             GUILayout.ExpandWidth(false);
             GUISkin skin = GUI.skin;
             skin.verticalScrollbarThumb = new GUIStyle();
-            Texture2D texture = UI.GUIUtility.CreateColoredTexture(UIStyles.squareTexture, UIStyles.DarkPurple);
-            skin.verticalScrollbarThumb.normal.background = texture;
+            skin.verticalScrollbarThumb.normal.background = UIStyles.scrollThumbTexture;
+            skin.verticalScrollbar.normal.background = UIStyles.scrollBackgroundTexture;
             NonSerialized.ScrollPosition = GUILayout.BeginScrollView(NonSerialized.ScrollPosition);
 
+            if (NonSerialized.SelectedTopBarCategory == NonSerialized.TopBarCategory.Main)
+                DrawMainUI();
+            else
+                DrawLogUI();
+            
+            GUILayout.EndScrollView();
+            GUI.DragWindow();
+        }
+
+        private static void DrawMainUI()
+        {
             GUILayout.Space(40f);
             Templates.Header.Draw("Cheats", ref cheatsExpanded);
             DrawCheatSettings();
@@ -84,11 +135,19 @@ namespace BagOfTricks.UI
 
             GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
             Templates.Header.Draw("Achievements", ref achievementsExpanded);
-
-            GUILayout.EndScrollView();
-            GUI.DragWindow();
         }
 
+        private void DrawLogUI()
+        {
+            List<LogEntry> logEntries = Debug.Logger.logHistory;
+            for (int i = 0; i < logEntries.Count; i++)
+            {
+                GUILayout.Space(20);
+                GUIStyle style = new GUIStyle(UIStyles.LogStyle);
+                style.normal.textColor = logEntries[i].logColor;
+                GUILayout.Label(logEntries[i].logMessage, style, GUILayout.ExpandWidth(true));
+            }
+        }
 
         #region Cheat Settings
         private static void DrawCheatSettings()
