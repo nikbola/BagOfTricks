@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using BagOfTricks.Debug;
+using BagOfTricks.UI;
+using Game;
+using UnityEngine;
 
 namespace BagOfTricks.Storage
 {
     internal static class NonSerialized
     {
         internal static string AddCurrencyAmount = "500";
+        internal static Vector2 ScrollPosition = Vector2.zero;
+
+        internal static PartyMemberAI[] partyMembers = new PartyMemberAI[0];
     }
 }

@@ -33,7 +33,7 @@ namespace BagOfTricks
             if (!Input.GetKeyDown(KeyCode.KeypadPlus))
                 return;
 
-            windowControls.showUI = !windowControls.showUI;
+            windowControls.ShowUI = !windowControls.ShowUI;
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
