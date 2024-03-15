@@ -140,12 +140,13 @@ namespace BagOfTricks.UI
         private void DrawLogUI()
         {
             List<LogEntry> logEntries = Debug.Logger.logHistory;
+            GUI.skin.label.wordWrap = true;
             for (int i = 0; i < logEntries.Count; i++)
             {
                 GUILayout.Space(20);
                 GUIStyle style = new GUIStyle(UIStyles.LogStyle);
                 style.normal.textColor = logEntries[i].logColor;
-                GUILayout.Label(logEntries[i].logMessage, style, GUILayout.ExpandWidth(true));
+                GUILayout.Label(logEntries[i].logMessage, style, GUILayout.Width(960 - 20));
             }
         }
 

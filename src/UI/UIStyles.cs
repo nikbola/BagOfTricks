@@ -144,7 +144,8 @@ namespace BagOfTricks
 
             _logStyle = new GUIStyle();
             _logStyle.normal.background = UI.GUIUtility.CreateTexture(1, 1, LighterDark);
-            _logStyle.fontSize = 18;
+            _logStyle.wordWrap = true;
+            _logStyle.fontSize = 16;
             _logStyle.alignment = TextAnchor.MiddleLeft;
             _logStyle.margin.left = 10;
             _logStyle.margin.right = 10;
@@ -152,6 +153,7 @@ namespace BagOfTricks
             _logStyle.padding.right = 10;
             _logStyle.padding.top = 15;
             _logStyle.padding.bottom = 15;
+            _logStyle.richText = true;
 
             scrollThumbTexture = UI.GUIUtility.CreateColoredTexture(squareTexture, DarkPurple);
             scrollBackgroundTexture = UI.GUIUtility.CreateColoredTexture(squareTexture, DarkestDark);
