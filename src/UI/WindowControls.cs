@@ -93,32 +93,8 @@ namespace BagOfTricks.UI
 
             GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
-            
-            GUILayout.Label(
-                text: "Add Currency",
-                style: UIStyles.LabelStyle,
-                options: new GUILayoutOption[] {
-                    GUILayout.Width(300f),
-                    GUILayout.Height(UIStyles.DefaultCategoryElementHeight)
-                }
-            );
 
-            NonSerialized.AddCurrencyAmount = GUILayout.TextField(
-                NonSerialized.AddCurrencyAmount, 
-                UIStyles.TextFieldStyle, 
-                GUILayout.Width(UIStyles.DefaultTextFieldWidth), 
-                GUILayout.Height(UIStyles.DefaultCategoryElementHeight)
-            );
-
-            if (Event.current.type == EventType.Repaint)
-            {
-                Rect textFieldRect = GUILayoutUtility.GetLastRect();
-                Rect lineRect = new Rect(textFieldRect.x, textFieldRect.yMax + 2, textFieldRect.width, 2);
-                
-                GUI.color = UIStyles.MainPurple;
-                GUI.DrawTexture(lineRect, Texture2D.whiteTexture);
-                GUI.color = Color.white;
-            }
+            Templates.TextField.Draw("Add Currency", ref NonSerialized.AddCurrencyAmount);
 
             Templates.Button.DrawRect("Add", onClick: () => 
             {

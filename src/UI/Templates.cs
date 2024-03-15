@@ -132,5 +132,37 @@ namespace BagOfTricks.UI
                 }
             }
         }
+
+        internal static class TextField
+        {
+            internal static void Draw(string label, ref string value)
+            {
+                GUILayout.Label(
+                    text: label,
+                    style: UIStyles.LabelStyle,
+                    options: new GUILayoutOption[] {
+                        GUILayout.Width(300f),
+                        GUILayout.Height(UIStyles.DefaultCategoryElementHeight)
+                    }
+                );
+
+                value = GUILayout.TextField(
+                    value,
+                    UIStyles.TextFieldStyle,
+                    GUILayout.Width(UIStyles.DefaultTextFieldWidth),
+                    GUILayout.Height(UIStyles.DefaultCategoryElementHeight)
+                );
+
+                if (Event.current.type == EventType.Repaint)
+                {
+                    Rect textFieldRect = GUILayoutUtility.GetLastRect();
+                    Rect lineRect = new(textFieldRect.x, textFieldRect.yMax + 2, textFieldRect.width, 2);
+
+                    GUI.color = UIStyles.MainPurple;
+                    GUI.DrawTexture(lineRect, Texture2D.whiteTexture);
+                    GUI.color = Color.white;
+                }
+            }
+        }
     }
 }
