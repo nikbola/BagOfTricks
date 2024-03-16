@@ -10,6 +10,6 @@ namespace BagOfTricks.Storage
     {
         public static bool BlockTelemetry = false;
         public static bool GodModeEnabled = false;
-        public static bool InvisibilityEnabled = false;
+        public static bool InvisibilityEnabled = true;
     }
 }
