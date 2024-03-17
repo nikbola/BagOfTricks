@@ -28,12 +28,17 @@ namespace BagOfTricks.UI
         private static bool movementExpanded = false;
         private static bool achievementsExpanded = false;
 
+        private static int characterCount = 0;
+        private static bool[] attrMenuExpanded = new bool[0];
+
+        private static int achievementHoverIndex = -1;
+
         private void Awake()
         {
             try
             {
                 Debug.Logger.ValidatePaths();
-                UIStyles.Initialize();
+                Styles.Initialize();
                 OnWindowStateChanged += HandleWindowStateChange;
             }
             catch (System.Exception e)
@@ -47,7 +52,7 @@ namespace BagOfTricks.UI
             if (!_showUI)
                 return;
 
-            GlobalWindowRect = GUILayout.Window(0, GlobalWindowRect, DrawWindow, "Bag of Tricks", UIStyles.WindowStyle);
+            GlobalWindowRect = GUILayout.Window(0, GlobalWindowRect, DrawWindow, "Bag of Tricks", Styles.GUIStyles.WindowStyle);
         }
 
         private static void HandleWindowStateChange(bool showUI)
@@ -58,16 +63,28 @@ namespace BagOfTricks.UI
                 return;
 
             Core.Stats.ClearPartyMembers();
-            NonSerialized.partyMembers = Core.Stats.GetPartyMembers();
+            NonSerialized.s_PartyMembers = Core.Stats.GetPartyMembers();
+
+            characterCount = NonSerialized.s_PartyMembers?.Length ?? 0;
+            attrMenuExpanded = new bool[characterCount];
+
+            if (AchievementTracker.Instance != null)
+            {
+                NonSerialized.s_AchievementInfo = new List<Tuple<string, string>>();
+                foreach (var achievement in AchievementTracker.Instance.Achievements)
+                {
+                    NonSerialized.s_AchievementInfo.Add(new Tuple<string, string>(achievement.AchievementName, achievement.AchievementAPIName));
+                }
+            }
         }
 
         private void DrawWindow(int windowID)
         {
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("Main", UIStyles.TopBarButtonStyle, GUILayout.Height(60)))
+            if (GUILayout.Button("Main", Styles.GUIStyles.TopBarButtonStyle, GUILayout.Height(60)))
             {
-                NonSerialized.SelectedTopBarCategory = NonSerialized.TopBarCategory.Main;
+                NonSerialized.s_SelectedTopBarCategory = NonSerialized.TopBarCategory.Main;
             }
 
             Rect mainButtonRect = default;
@@ -80,9 +97,9 @@ namespace BagOfTricks.UI
 
             var separatorRect = new Rect(mainButtonRect.xMax, mainButtonRect.y, 2, mainButtonRect.height);
 
-            if (GUILayout.Button("Logs", UIStyles.TopBarButtonStyle, GUILayout.Height(60)))
+            if (GUILayout.Button("Logs", Styles.GUIStyles.TopBarButtonStyle, GUILayout.Height(60)))
             {
-                NonSerialized.SelectedTopBarCategory = NonSerialized.TopBarCategory.Logs;
+                NonSerialized.s_SelectedTopBarCategory = NonSerialized.TopBarCategory.Logs;
             }
 
             if (Event.current.type == EventType.repaint)
@@ -90,15 +107,15 @@ namespace BagOfTricks.UI
                 logsButtonRect = GUILayoutUtility.GetLastRect();
             }
 
-            bool isMainSelected = NonSerialized.SelectedTopBarCategory == NonSerialized.TopBarCategory.Main;
+            bool isMainSelected = NonSerialized.s_SelectedTopBarCategory == NonSerialized.TopBarCategory.Main;
             Rect selectedRect = isMainSelected ? mainButtonRect : logsButtonRect;
 
-            GUI.color = UIStyles.DarkestDark;
+            GUI.color = Styles.Colors.DarkestDark;
             GUI.DrawTexture(separatorRect, Texture2D.whiteTexture);
             GUI.color = Color.white;
 
             var selectionRect = new Rect(selectedRect.x, selectedRect.yMax - 1, selectedRect.width, 2);
-            GUI.color = UIStyles.MainPurple;
+            GUI.color = Styles.Colors.MainPurple;
             GUI.DrawTexture(selectionRect, Texture2D.whiteTexture);
             GUI.color = Color.white;
 
@@ -107,11 +124,11 @@ namespace BagOfTricks.UI
             GUILayout.ExpandWidth(false);
             GUISkin skin = GUI.skin;
             skin.verticalScrollbarThumb = new GUIStyle();
-            skin.verticalScrollbarThumb.normal.background = UIStyles.scrollThumbTexture;
-            skin.verticalScrollbar.normal.background = UIStyles.scrollBackgroundTexture;
-            NonSerialized.ScrollPosition = GUILayout.BeginScrollView(NonSerialized.ScrollPosition);
+            skin.verticalScrollbarThumb.normal.background = Styles.Textures.scrollThumbTexture;
+            skin.verticalScrollbar.normal.background = Styles.Textures.scrollBackgroundTexture;
+            NonSerialized.s_ScrollPosition = GUILayout.BeginScrollView(NonSerialized.s_ScrollPosition);
 
-            if (NonSerialized.SelectedTopBarCategory == NonSerialized.TopBarCategory.Main)
+            if (NonSerialized.s_SelectedTopBarCategory == NonSerialized.TopBarCategory.Main)
                 DrawMainUI();
             else
                 DrawLogUI();
@@ -126,15 +143,16 @@ namespace BagOfTricks.UI
             Templates.Header.Draw("Cheats", ref cheatsExpanded);
             DrawCheatSettings();
 
-            GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
+            GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             Templates.Header.Draw("Stats", ref statsExpanded);
             DrawStatsSettings();
 
-            GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
+            GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             Templates.Header.Draw("Movement", ref movementExpanded);
 
-            GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
+            GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             Templates.Header.Draw("Achievements", ref achievementsExpanded);
+            DrawAchievementSettings();
         }
 
         private void DrawLogUI()
@@ -144,7 +162,7 @@ namespace BagOfTricks.UI
             for (int i = 0; i < logEntries.Count; i++)
             {
                 GUILayout.Space(20);
-                GUIStyle style = new GUIStyle(UIStyles.LogStyle);
+                var style = new GUIStyle(Styles.GUIStyles.LogStyle);
                 style.normal.textColor = logEntries[i].logColor;
                 GUILayout.Label(logEntries[i].logMessage, style, GUILayout.Width(960 - 20));
             }
@@ -155,7 +173,7 @@ namespace BagOfTricks.UI
         {
             if (!cheatsExpanded)
                 return;
-            GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
+            GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
             Templates.Toggle.Draw("Block Telemetry (Requires Restart)", value: ref Serialized.BlockTelemetry);
@@ -164,7 +182,7 @@ namespace BagOfTricks.UI
             Templates.Button.DrawRounded("Kill All Enemies", onClick: Cheats.KillAllEnemies);
             
             GUILayout.EndHorizontal();
-            GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
+            GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
             Templates.Toggle.Draw("Enable Godmode", value: ref Serialized.GodModeEnabled);
@@ -174,20 +192,20 @@ namespace BagOfTricks.UI
             Templates.Button.DrawRounded("Clear Fog", onClick: Cheats.ClearFogOfWar);
 
             GUILayout.EndHorizontal();
-            GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
+            GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
             Templates.Toggle.Draw("Enable Invisibility", value: ref Serialized.InvisibilityEnabled);
 
             GUILayout.EndHorizontal();
-            GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
+            GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
-            Templates.TextField.Draw("Add Currency", ref NonSerialized.AddCurrencyAmount);
+            Templates.TextField.Draw("Add Currency", ref NonSerialized.s_AddCurrencyAmount);
 
             Templates.Button.DrawRect("Add", onClick: () => 
             {
-                Cheats.AddCurrency(int.Parse(NonSerialized.AddCurrencyAmount));
+                Cheats.AddCurrency(int.Parse(NonSerialized.s_AddCurrencyAmount));
             });
 
             GUILayout.EndHorizontal();
@@ -200,24 +218,52 @@ namespace BagOfTricks.UI
             if (!statsExpanded)
                 return;
 
-            GUILayout.Space(UIStyles.VerticalSpaceBetweenItems);
+            GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
 
-            string[] cNames = NonSerialized.partyMembers.GetNames();
+            string[] cNames = NonSerialized.s_PartyMembers.GetNames();
             for (int i = 0; i < cNames.Length; i++)
             {
-                Game.PartyMemberAI partyMember = NonSerialized.partyMembers[i];
-                
-                GUILayout.FlexibleSpace();
-                GUIStyle nameLabelStyle = new(UIStyles.LabelStyle);
-                nameLabelStyle.alignment = TextAnchor.MiddleCenter;
-                nameLabelStyle.margin.left = (int)UIStyles.DefaultHeaderLabelWidth;
-                nameLabelStyle.normal.background = UIStyles.squareTexture;
+                Game.PartyMemberAI partyMember = NonSerialized.s_PartyMembers[i];
 
-                GUILayout.Label(cNames[i], nameLabelStyle, GUILayout.Width(500f), GUILayout.Height(UIStyles.DefaultCategoryElementHeight));
-                GUILayout.Label("Attributes:", UIStyles.LabelStyle, GUILayout.Width(250f), GUILayout.Height(UIStyles.DefaultCategoryElementHeight));
+                GUILayout.Space(15);
+
+                GUILayout.FlexibleSpace();
+                GUIStyle nameLabelStyle = new(Styles.GUIStyles.LabelStyle);
+                nameLabelStyle.alignment = TextAnchor.MiddleCenter;
+                nameLabelStyle.margin.left = (int)Styles.Dimensions.DefaultHeaderLabelWidth;
+                nameLabelStyle.normal.background = Styles.Textures.squareTexture;
+
+                if (GUILayout.Button(cNames[i], nameLabelStyle, GUILayout.Width(500f), GUILayout.Height(Styles.Dimensions.DefaultCategoryElementHeight)))
+                {
+                    attrMenuExpanded[i] = !attrMenuExpanded[i];
+                }
+
+                if (!attrMenuExpanded[i])
+                {
+                    if (i == cNames.Length - 1)
+                        GUILayout.Space(15);
+                    continue;
+                }
+
+                Rect pMemberBtn = default;
+                if (Event.current.type == EventType.Repaint)
+                {
+                    pMemberBtn = GUILayoutUtility.GetLastRect();
+                }
+
+                Rect pMemberBtnSelection = new(pMemberBtn.x, pMemberBtn.yMax, pMemberBtn.width, 2);
+                GUI.color = Styles.Colors.MainPurple;
+                GUI.DrawTexture(pMemberBtnSelection, Texture2D.whiteTexture);
+                GUI.color = Color.white;
+
+                GUILayout.Space(10);
+
+                GUILayout.Label("Attributes:", Styles.GUIStyles.LabelStyle, GUILayout.Width(250f), GUILayout.Height(Styles.Dimensions.DefaultCategoryElementHeight));
 
                 foreach (Game.CharacterStats.AttributeScoreType type in Enum.GetValues(typeof(Game.CharacterStats.AttributeScoreType)))
                 {
+                    GUILayout.Space(10);
+
                     GUILayout.BeginHorizontal();
                     string LabelString = "";
                     switch (type)
@@ -246,11 +292,11 @@ namespace BagOfTricks.UI
                         default:
                             break;
                     }
-                    
-                    int statValue = Stats.GetBaseAttributeScore(type, partyMember);
-                    GUILayout.Label(LabelString, UIStyles.LabelStyle, GUILayout.Width(100f), GUILayout.Height(UIStyles.DefaultCategoryElementHeight));
 
-                    GUIStyle buttonStyle = new GUIStyle(UIStyles.ToggleStyle);
+                    int statValue = Stats.GetBaseAttributeScore(type, partyMember);
+                    GUILayout.Label(LabelString, Styles.GUIStyles.LabelStyle, GUILayout.Width(100f), GUILayout.Height(25));
+
+                    GUIStyle buttonStyle = new GUIStyle(Styles.GUIStyles.ToggleStyle);
                     buttonStyle.alignment = TextAnchor.MiddleCenter;
                     buttonStyle.normal.textColor = Color.white;
                     if (GUILayout.Button("-", buttonStyle, GUILayout.Width(25), GUILayout.Height(25)))
@@ -261,19 +307,70 @@ namespace BagOfTricks.UI
                     var style = GUI.skin.GetStyle("Label");
                     style.alignment = TextAnchor.UpperCenter;
 
-                    GUI.color = UIStyles.MainPurple;
-                    GUILayout.Label(statValue.ToString() + " ", style, GUILayout.Width(45), GUILayout.Height(UIStyles.DefaultCategoryElementHeight));
+                    GUI.color = Styles.Colors.MainPurple;
+                    GUILayout.Label(statValue.ToString() + " ", style, GUILayout.Width(45), GUILayout.Height(25));
                     GUI.color = Color.white;
 
-                    //style.alignment = TextAnchor.UpperLeft;
                     if (GUILayout.Button("+", buttonStyle, GUILayout.Width(25), GUILayout.Height(25)))
                     {
                         Stats.SetBaseAttributeScore(type, partyMember, statValue + 1);
                     }
                     GUILayout.EndHorizontal();
                 }
+
+                GUILayout.Space(10);
             }
         }
         #endregion
+
+        public static void DrawAchievementSettings()
+        {
+            if (!achievementsExpanded) return;
+
+            if (AchievementTracker.Instance == null)
+            {
+                GUILayout.Label("AchievementTracker not instantiated. Load a save to access achievements.", Styles.GUIStyles.LabelStyle);
+                return;
+            }
+            GUILayout.Space(5f);
+            GUILayout.BeginVertical();
+
+            int i = 0;
+            foreach (var achievement in NonSerialized.s_AchievementInfo)
+            {
+                GUILayout.Space(6f);
+
+                GUIStyle style = new();
+                Texture2D texture = new(1, 1);
+                Color backgroundColor = i % 2 == 0 ? Styles.Colors.LighterDark : Styles.Colors.Gray;
+                texture.SetPixel(0, 0, backgroundColor);
+                texture.Apply();
+                style.normal.background = texture;
+
+                GUILayout.BeginHorizontal(style);
+
+                GUIStyle labelStyle = new(Styles.GUIStyles.LabelStyle);
+                labelStyle.margin.left = Styles.Dimensions.HeaderVerticalMargin;
+                string achievementName = AchievementTracker.GetAchievementName(achievement.Second);
+                GUILayout.Label(achievementName + " - " + achievement.First, labelStyle, GUILayout.Height(40));
+
+                var buttonHeight = 40 * 0.7f;
+                var buttonYOffset = (40 - buttonHeight) / 2;
+
+                GUILayout.FlexibleSpace();
+
+                GUILayout.BeginVertical();
+                GUILayout.Space(buttonYOffset);
+                Templates.Button.DrawRounded("Unlock", onClick: () =>
+                {
+                    AchievementTracker.Instance.SetAchievement(achievement.Second);
+                }, scaleFactor: 0.7f);
+                GUILayout.EndVertical();
+
+                GUILayout.EndHorizontal();
+                i++;
+            }
+            GUILayout.EndVertical();
+        }
     }
 }

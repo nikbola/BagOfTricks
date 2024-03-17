@@ -1,5 +1,4 @@
-﻿using BagOfTricks.Storage;
-using Game;
+﻿using Game;
 
 namespace BagOfTricks.Extensions
 {
