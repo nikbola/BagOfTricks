@@ -2,6 +2,7 @@
 using BagOfTricks.Debug;
 using BagOfTricks.Extensions;
 using BagOfTricks.Storage;
+using BepInEx;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,7 +32,7 @@ namespace BagOfTricks.UI
         private static int characterCount = 0;
         private static bool[] attrMenuExpanded = new bool[0];
 
-        private static int achievementHoverIndex = -1;
+        private static string searchString = string.Empty;
 
         private void Awake()
         {
@@ -70,10 +71,24 @@ namespace BagOfTricks.UI
 
             if (AchievementTracker.Instance != null)
             {
-                NonSerialized.s_AchievementInfo = new List<Tuple<string, string>>();
+                NonSerialized.s_AchievementInfo = new List<Tuple<string, string, string>>();
                 foreach (var achievement in AchievementTracker.Instance.Achievements)
                 {
-                    NonSerialized.s_AchievementInfo.Add(new Tuple<string, string>(achievement.AchievementName, achievement.AchievementAPIName));
+                    string achievementName = AchievementTracker.GetAchievementName(achievement.AchievementAPIName);
+                    string achievementDescr = achievement.AchievementName;
+                   
+                    Achievement.Parse(ref achievementName, ref achievementDescr);
+
+                    if (achievementName.StartsWith("string"))
+                    {
+                        if (Achievement.invalidAchievementLookup.TryGetValue(achievementDescr, out var validAchievement))
+                        {
+                            achievementName = validAchievement.First;
+                            achievementDescr = validAchievement.Second;
+                        }
+                    }
+
+                    NonSerialized.s_AchievementInfo.Add(new Tuple<string, string, string>(achievementName, achievementDescr, achievement.AchievementAPIName));
                 }
             }
         }
@@ -335,32 +350,79 @@ namespace BagOfTricks.UI
             GUILayout.Space(5f);
             GUILayout.BeginVertical();
 
+            GUIStyle searchbarStyle = Styles.GUIStyles.TextFieldStyle;
+            searchbarStyle.alignment = TextAnchor.MiddleLeft;
+            Color backgroundColor = Styles.Colors.LighterDark;
+            Texture2D texture = new(1, 1);
+            texture.SetPixel(0, 0, backgroundColor);
+            texture.Apply();
+            searchbarStyle.normal.background = texture;
+            var width = GUILayout.Width(400f);
+            var height = GUILayout.Height(40);
+
+            GUILayout.Space(6f);
+
+            searchString = GUILayout.TextField(searchString, searchbarStyle, width, height);
+
+            Rect searchbarRect = default;
+            if (Event.current.type == EventType.Repaint)
+            {
+                searchbarRect = GUILayoutUtility.GetLastRect();
+            }
+
+            float offsetY = searchbarRect.height / 4f;
+            var searchIconRect = new Rect(searchbarRect.xMax - 30, searchbarRect.y + offsetY, 20, 20);
+            GUI.DrawTexture(searchIconRect, Styles.Textures.magnifyingGlass);
+
             for (int i = 0; i < NonSerialized.s_AchievementInfo.Count; i++)
             {
-                Tuple<string, string> achievement = NonSerialized.s_AchievementInfo[i];
-                DrawAchievementRow(achievement, i);
+                Tuple<string, string, string> achievement = NonSerialized.s_AchievementInfo[i];
+                string name = achievement.First;
+                string descr = achievement.Second;
+                string APIName = achievement.Third;
+
+                if (searchString.IsNullOrWhiteSpace())
+                {
+                    DrawAchievementRow(name, descr, APIName, i);
+                    continue;
+                }
+                else
+                {
+                    bool wasInName = false;
+                    bool wasInDescr = false;
+                    if (name.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0)
+                        wasInName = true;
+                    if (descr.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0) 
+                        wasInDescr = true;
+
+                    if (!wasInName && !wasInDescr)
+                        continue;
+
+                    if (wasInName)
+                        name = Achievement.HighlightSearch(name, searchString);
+                    if (wasInDescr) 
+                        descr = Achievement.HighlightSearch(descr, searchString);
+
+                    DrawAchievementRow(name, descr, APIName, i);
+                }
             }
 
             GUILayout.EndVertical();
         }
 
-        private static void DrawAchievementRow(Tuple<string, string> achievement, int index)
+        private static void DrawAchievementRow(string name, string descr, string APIName, int index)
         {
             GUILayout.Space(6f);
 
             GUIStyle style = new();
-            Texture2D texture = new(1, 1);
-            Color backgroundColor = index % 2 == 0 ? Styles.Colors.LighterDark : Styles.Colors.Gray;
-            texture.SetPixel(0, 0, backgroundColor);
-            texture.Apply();
-            style.normal.background = texture;
+            Texture2D backgroundTexture = index % 2 == 0 ? Styles.Textures.achievementRowEven : Styles.Textures.achievementRowOdd;
+            style.normal.background = backgroundTexture;
 
             GUILayout.BeginHorizontal(style);
 
             GUIStyle labelStyle = new(Styles.GUIStyles.LabelStyle);
             labelStyle.margin.left = Styles.Dimensions.HeaderVerticalMargin;
-            string achievementName = AchievementTracker.GetAchievementName(achievement.Second);
-            GUILayout.Label(achievementName + " - " + achievement.First, labelStyle, GUILayout.Height(40));
+            GUILayout.Label(name + " - " + descr, labelStyle, GUILayout.Height(40));
 
             var buttonHeight = 40 * 0.7f;
             var buttonYOffset = (40 - buttonHeight) / 2;
@@ -371,7 +433,7 @@ namespace BagOfTricks.UI
             GUILayout.Space(buttonYOffset);
             Templates.Button.DrawRounded("Unlock", onClick: () =>
             {
-                AchievementTracker.Instance.SetAchievement(achievement.Second);
+                AchievementTracker.Instance.SetAchievement(APIName);
             }, scaleFactor: 0.7f);
             GUILayout.EndVertical();
 

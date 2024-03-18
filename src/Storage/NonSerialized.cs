@@ -13,7 +13,7 @@ namespace BagOfTricks.Storage
 
         internal static TopBarCategory s_SelectedTopBarCategory = TopBarCategory.Main;
 
-        internal static List<Tuple<string, string>> s_AchievementInfo = new();
+        internal static List<Tuple<string, string, string>> s_AchievementInfo = new();
 
         public enum TopBarCategory 
         {
