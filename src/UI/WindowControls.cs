@@ -3,6 +3,7 @@ using BagOfTricks.Debug;
 using BagOfTricks.Extensions;
 using BagOfTricks.Storage;
 using BepInEx;
+using Game;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -61,37 +62,23 @@ namespace BagOfTricks.UI
         {
             Debug.Logger.Write<Info>("Show UI: " + showUI);
 
-            if (!showUI)
-                return;
-
-            Core.Stats.ClearPartyMembers();
-            NonSerialized.s_PartyMembers = Core.Stats.GetPartyMembers();
-
-            characterCount = NonSerialized.s_PartyMembers?.Length ?? 0;
-            attrMenuExpanded = new bool[characterCount];
-
-            if (AchievementTracker.Instance != null)
+            if (showUI)
             {
-                NonSerialized.s_AchievementInfo = new List<Tuple<string, string, string>>();
-                foreach (var achievement in AchievementTracker.Instance.Achievements)
-                {
-                    string achievementName = AchievementTracker.GetAchievementName(achievement.AchievementAPIName);
-                    string achievementDescr = achievement.AchievementName;
-                   
-                    Achievement.Parse(ref achievementName, ref achievementDescr);
+                Core.Stats.ClearPartyMembers();
+                NonSerialized.s_PartyMembers = Core.Stats.GetPartyMembers();
 
-                    if (achievementName.StartsWith("string"))
-                    {
-                        if (Achievement.invalidAchievementLookup.TryGetValue(achievementDescr, out var validAchievement))
-                        {
-                            achievementName = validAchievement.First;
-                            achievementDescr = validAchievement.Second;
-                        }
-                    }
+                PartyMemberAI[] partyMembers = NonSerialized.s_PartyMembers;
+                NonSerialized.s_Movers = Movement.GetMovers(partyMembers);
 
-                    NonSerialized.s_AchievementInfo.Add(new Tuple<string, string, string>(achievementName, achievementDescr, achievement.AchievementAPIName));
-                }
+                characterCount = NonSerialized.s_PartyMembers?.Length ?? 0;
+                attrMenuExpanded = new bool[characterCount];
+
+                Achievements.Fetch();
+
+                return;
             }
+
+            Movement.ApplySettings();
         }
 
         private void DrawWindow(int windowID)
@@ -466,9 +453,9 @@ namespace BagOfTricks.UI
                         continue;
 
                     if (wasInName)
-                        name = Achievement.HighlightSearch(name, searchString);
+                        name = Achievements.HighlightSearch(name, searchString);
                     if (wasInDescr) 
-                        descr = Achievement.HighlightSearch(descr, searchString);
+                        descr = Achievements.HighlightSearch(descr, searchString);
 
                     DrawAchievementRow(name, descr, APIName, i);
                 }
