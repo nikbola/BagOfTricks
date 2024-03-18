@@ -22,6 +22,8 @@ namespace BagOfTricks
 
             public static readonly Color ButtonPurpleHighlight = new(0.20f, 0.20f, 0.28f);
             public static readonly Color ButtonPurpleSelected = new(0.16f, 0.16f, 0.24f);
+
+            public static readonly string GreenHex = ColorUtility.ToHtmlStringRGB(SuccessGreen);
         }
         
         public static class GUIStyles
@@ -61,6 +63,9 @@ namespace BagOfTricks
             public static Texture2D squareTexture;
             public static Texture2D scrollThumbTexture;
             public static Texture2D scrollBackgroundTexture;
+            public static Texture2D magnifyingGlass;
+            public static Texture2D achievementRowEven;
+            public static Texture2D achievementRowOdd;
         }
 
         public static void Initialize()
@@ -81,6 +86,14 @@ namespace BagOfTricks
             string relTextRectPath = "BagOfTricks2\\UI\\Text Field Rect.png";
             fullPath = Path.Combine(pluginPath, relTextRectPath);
             Textures.rectTextFieldTexture = UI.GUIUtility.LoadTexture(fullPath);
+
+            string relMagnifyingPath = "BagOfTricks2\\UI\\Magnifying Glass.png";
+            fullPath = Path.Combine(pluginPath, relMagnifyingPath);
+            Texture2D magnifyingIcon = UI.GUIUtility.LoadTexture(fullPath);
+            Textures.magnifyingGlass = UI.GUIUtility.CreateColoredTexture(magnifyingIcon, Colors.MainPurple);
+            
+            Textures.achievementRowEven = UI.GUIUtility.CreateTexture(1, 1, Colors.LighterDark);
+            Textures.achievementRowOdd = UI.GUIUtility.CreateTexture(1, 1, Colors.Gray);
 
             GUIStyles.WindowStyle = new GUIStyle();
             GUIStyles.WindowStyle.normal.background = UI.GUIUtility.CreateTexture(1, 1, Colors.MainDark);
