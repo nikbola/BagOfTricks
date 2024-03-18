@@ -22,6 +22,7 @@ namespace BagOfTricks.Core
             { "Complete all BWound Quests and Sidequests", new("Troubleshooter", "Complete all available quests and sidequests in the Bastard's Wound") },
             { "End with Barik trapped", new("Sloppy Seconds", "Complete the game with Barik freed out of his armor but trapped in a cage of abuse") },
             { "Feed Verse to Nerat", new("Let the Next Verse Begin", "Complete Verse's Side-quest and have her usurp the Voices of Nerat") },
+            { "Vision quest with Lantry", new("High as the Mountain Spire", "Share an uncomfortable moment with a party of four or more (Sirin doesn't count)")},
             { "Kill a foe with slab of meat", new("Nice to Meat You", "Slay a foe with a slab of meat") },
             { "End the game peacefully", new("Apocalypse Later", "End the conquest of the Tiers with a peaceful surrender") },
             { "Complete BWound quests but walk away", new("Complicit Justice", "Learn of the infighting in Bastard's Wound, and do nothing to resolve it") },
