@@ -335,42 +335,47 @@ namespace BagOfTricks.UI
             GUILayout.Space(5f);
             GUILayout.BeginVertical();
 
-            int i = 0;
-            foreach (var achievement in NonSerialized.s_AchievementInfo)
+            for (int i = 0; i < NonSerialized.s_AchievementInfo.Count; i++)
             {
-                GUILayout.Space(6f);
-
-                GUIStyle style = new();
-                Texture2D texture = new(1, 1);
-                Color backgroundColor = i % 2 == 0 ? Styles.Colors.LighterDark : Styles.Colors.Gray;
-                texture.SetPixel(0, 0, backgroundColor);
-                texture.Apply();
-                style.normal.background = texture;
-
-                GUILayout.BeginHorizontal(style);
-
-                GUIStyle labelStyle = new(Styles.GUIStyles.LabelStyle);
-                labelStyle.margin.left = Styles.Dimensions.HeaderVerticalMargin;
-                string achievementName = AchievementTracker.GetAchievementName(achievement.Second);
-                GUILayout.Label(achievementName + " - " + achievement.First, labelStyle, GUILayout.Height(40));
-
-                var buttonHeight = 40 * 0.7f;
-                var buttonYOffset = (40 - buttonHeight) / 2;
-
-                GUILayout.FlexibleSpace();
-
-                GUILayout.BeginVertical();
-                GUILayout.Space(buttonYOffset);
-                Templates.Button.DrawRounded("Unlock", onClick: () =>
-                {
-                    AchievementTracker.Instance.SetAchievement(achievement.Second);
-                }, scaleFactor: 0.7f);
-                GUILayout.EndVertical();
-
-                GUILayout.EndHorizontal();
-                i++;
+                Tuple<string, string> achievement = NonSerialized.s_AchievementInfo[i];
+                DrawAchievementRow(achievement, i);
             }
+
             GUILayout.EndVertical();
+        }
+
+        private static void DrawAchievementRow(Tuple<string, string> achievement, int index)
+        {
+            GUILayout.Space(6f);
+
+            GUIStyle style = new();
+            Texture2D texture = new(1, 1);
+            Color backgroundColor = index % 2 == 0 ? Styles.Colors.LighterDark : Styles.Colors.Gray;
+            texture.SetPixel(0, 0, backgroundColor);
+            texture.Apply();
+            style.normal.background = texture;
+
+            GUILayout.BeginHorizontal(style);
+
+            GUIStyle labelStyle = new(Styles.GUIStyles.LabelStyle);
+            labelStyle.margin.left = Styles.Dimensions.HeaderVerticalMargin;
+            string achievementName = AchievementTracker.GetAchievementName(achievement.Second);
+            GUILayout.Label(achievementName + " - " + achievement.First, labelStyle, GUILayout.Height(40));
+
+            var buttonHeight = 40 * 0.7f;
+            var buttonYOffset = (40 - buttonHeight) / 2;
+
+            GUILayout.FlexibleSpace();
+
+            GUILayout.BeginVertical();
+            GUILayout.Space(buttonYOffset);
+            Templates.Button.DrawRounded("Unlock", onClick: () =>
+            {
+                AchievementTracker.Instance.SetAchievement(achievement.Second);
+            }, scaleFactor: 0.7f);
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
         }
     }
 }
