@@ -2,6 +2,7 @@
 using BagOfTricks.Meta;
 using BagOfTricks.UI;
 using BepInEx;
+using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,10 +16,21 @@ namespace BagOfTricks
 
         public static Queue<string> UnhandledLogs = new Queue<string>();
 
+        Harmony harmonyPatcher = new Harmony(ProjectInfo.PLUGIN_GUID);
+
         private void Awake()
         {
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            Debug.Logger.Write<Info>($"Plugin {ProjectInfo.PLUGIN_NAME} is loaded!");
+            try
+            {
+                SceneManager.sceneLoaded += OnSceneLoaded;
+                harmonyPatcher.PatchAll();
+
+                Debug.Logger.Write<Success>($"Successfully loaded mod!");
+            }
+            catch (System.Exception e)
+            {
+                Debug.Logger.Write<Error>(message: "Something went wrong when loading the mod!", exception: e);
+            }
         }
 
         private void Update()

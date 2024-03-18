@@ -5,6 +5,7 @@ using BagOfTricks.Storage;
 using BepInEx;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 namespace BagOfTricks.UI
@@ -164,6 +165,7 @@ namespace BagOfTricks.UI
 
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             Templates.Header.Draw("Movement", ref movementExpanded);
+            DrawMovementSettings();
 
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             Templates.Header.Draw("Achievements", ref achievementsExpanded);
@@ -338,7 +340,72 @@ namespace BagOfTricks.UI
         }
         #endregion
 
-        public static void DrawAchievementSettings()
+        public static void DrawMovementSettings()
+        {
+            if (!movementExpanded)
+                return;
+
+            GUIStyle textFieldStyle = new(Styles.GUIStyles.ToggleStyle);
+            textFieldStyle.normal.textColor = Styles.Colors.MainPurple;
+            textFieldStyle.alignment = TextAnchor.MiddleCenter;
+            textFieldStyle.fontStyle = FontStyle.Bold;
+            textFieldStyle.normal.background = Styles.Textures.achievementRowEven;
+            textFieldStyle.margin.right = 10;
+
+            GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
+
+            DrawMovementSlider("Run Speed:", textFieldStyle, ref Serialized.RunSpeed, ref Serialized.DefaultRunSpeed);
+
+            GUILayout.Space(8f);
+
+            DrawMovementSlider("Walk Speed:", textFieldStyle, ref Serialized.WalkSpeed, ref Serialized.DefaultWalkSpeed);
+
+            GUILayout.Space(8f);
+
+            DrawMovementSlider("Stealth Speed:", textFieldStyle, ref Serialized.StealthSpeed, ref Serialized.DefaultStealthSpeed);
+        }
+
+        private static void DrawMovementSlider(string label, GUIStyle style, ref float value, ref float defaultValue)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label, GUILayout.Width(100f));
+            string InputFieldText = value.ToString("0.0#", CultureInfo.InvariantCulture);
+            InputFieldText = GUILayout.TextField(InputFieldText, 10, style, GUILayout.Height(28f), GUILayout.Width(75f));
+
+            // Must cache because ref values cannot be used in lambda methods
+            float cachedValue = value;
+            float cachedDefaultValue = defaultValue;
+            Templates.Button.DrawRounded("Reset", onClick: () =>
+            {
+                cachedValue = cachedDefaultValue;
+                InputFieldText = cachedDefaultValue.ToString("0.0#", CultureInfo.InvariantCulture);
+            }, scaleFactor: 0.7f);
+
+            value = cachedValue;
+            cachedDefaultValue = defaultValue;
+
+            if (!float.TryParse(InputFieldText, out value))
+            {
+                value = defaultValue;
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            value = GUILayout.HorizontalSlider(value, 0.0f, 25.0f);
+
+            GUILayout.Space(8f);
+            GUILayout.BeginHorizontal();
+
+            var defaultAlignment = GUI.skin.label.alignment;
+            GUI.skin.label.alignment = TextAnchor.UpperLeft;
+            GUILayout.Label(Serialized.MinMovementSpeed.ToString());
+            GUI.skin.label.alignment = TextAnchor.UpperRight;
+            GUILayout.Label(Serialized.MaxMovementSpeed.ToString());
+            GUI.skin.label.alignment = defaultAlignment;
+            GUILayout.EndHorizontal();
+        }
+
+        private static void DrawAchievementSettings()
         {
             if (!achievementsExpanded) return;
 
