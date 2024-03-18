@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using BagOfTricks.Storage;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace BagOfTricks.Core
 {
-    internal static class Achievement
+    internal static class Achievements
     {
         internal static Dictionary<string, Tuple<string, string>> invalidAchievementLookup = new()
         {
@@ -28,6 +29,35 @@ namespace BagOfTricks.Core
             { "Complete BWound quests but walk away", new("Complicit Justice", "Learn of the infighting in Bastard's Wound, and do nothing to resolve it") },
             { "Huge Miss Steak", new("I've Made a Huge Miss Steak", "Perform a Critical Miss with a slab of meat") }
         };
+
+        public static void Fetch()
+        {
+            if (NonSerialized.s_AchievementInfo.Count > 0)
+                return;
+
+            if (AchievementTracker.Instance != null)
+            {
+                NonSerialized.s_AchievementInfo = new List<Tuple<string, string, string>>();
+                foreach (var achievement in AchievementTracker.Instance.Achievements)
+                {
+                    string achievementName = AchievementTracker.GetAchievementName(achievement.AchievementAPIName);
+                    string achievementDescr = achievement.AchievementName;
+
+                    Parse(ref achievementName, ref achievementDescr);
+
+                    if (achievementName.StartsWith("string"))
+                    {
+                        if (invalidAchievementLookup.TryGetValue(achievementDescr, out var validAchievement))
+                        {
+                            achievementName = validAchievement.First;
+                            achievementDescr = validAchievement.Second;
+                        }
+                    }
+
+                    NonSerialized.s_AchievementInfo.Add(new Tuple<string, string, string>(achievementName, achievementDescr, achievement.AchievementAPIName));
+                }
+            }
+        }
 
         public static void Parse(ref string name, ref string descr)
         {

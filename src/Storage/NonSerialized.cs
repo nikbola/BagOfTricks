@@ -10,6 +10,7 @@ namespace BagOfTricks.Storage
         internal static Vector2 s_ScrollPosition = Vector2.zero;
 
         internal static PartyMemberAI[] s_PartyMembers = new PartyMemberAI[0];
+        internal static Mover[] s_Movers = new Mover[0];
 
         internal static TopBarCategory s_SelectedTopBarCategory = TopBarCategory.Main;
 
