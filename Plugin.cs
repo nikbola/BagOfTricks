@@ -1,4 +1,5 @@
 ﻿using BagOfTricks.Debug;
+using BagOfTricks.Keybinds;
 using BagOfTricks.Meta;
 using BagOfTricks.UI;
 using BepInEx;
@@ -24,6 +25,7 @@ namespace BagOfTricks
             {
                 SceneManager.sceneLoaded += OnSceneLoaded;
                 harmonyPatcher.PatchAll();
+                KeybindHandler.Initialize();
 
                 Debug.Logger.Write<Success>($"Successfully loaded mod!");
             }
@@ -40,11 +42,6 @@ namespace BagOfTricks
                 string message = UnhandledLogs.Dequeue();
                 Logger.LogInfo($"Internal log: {message}");
             }
-
-            if (!Input.GetKeyDown(KeyCode.KeypadPlus))
-                return;
-
-            windowControls.ShowUI = !windowControls.ShowUI;
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
