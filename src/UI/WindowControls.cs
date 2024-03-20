@@ -1,6 +1,7 @@
 ﻿using BagOfTricks.Core;
 using BagOfTricks.Debug;
 using BagOfTricks.Extensions;
+using BagOfTricks.Keybinds;
 using BagOfTricks.Storage;
 using BepInEx;
 using Game;
@@ -15,8 +16,8 @@ namespace BagOfTricks.UI
     {
         public static Action<bool> OnWindowStateChanged;
 
-        private bool _showUI = false;
-        public bool ShowUI { 
+        private static bool _showUI = false;
+        public static bool ShowUI { 
             get { return _showUI; } 
             set 
             { 
@@ -50,8 +51,15 @@ namespace BagOfTricks.UI
             }
         }
 
+        public static void ToggleUI()
+        {
+            ShowUI = !ShowUI;
+        }
+
         private void OnGUI()
         {
+            KeybindHandler.ProcessKeybinds();
+
             if (!_showUI)
                 return;
 
