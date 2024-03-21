@@ -49,7 +49,7 @@ namespace BagOfTricks.UI
 
         internal static class Toggle
         {
-            internal static void Draw(string label, ref bool value)
+            internal static void Draw(string label, ref bool value, ref bool previousValue, Action onValueChanged)
             {
                 GUILayout.Label(
                     text: label,
@@ -71,6 +71,12 @@ namespace BagOfTricks.UI
                         GUILayout.Height(Styles.Dimensions.DefaultCategoryElementHeight)
                     }
                 );
+
+                if (value != previousValue) 
+                {
+                    onValueChanged?.Invoke();
+                    previousValue = value;
+                } 
             }
         }
 

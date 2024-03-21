@@ -185,10 +185,15 @@ namespace BagOfTricks.UI
         {
             if (!cheatsExpanded)
                 return;
+
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
-            Templates.Toggle.Draw("Block Telemetry (Requires Restart)", value: ref Serialized.BlockTelemetry);
+            Templates.Toggle.Draw("Block Telemetry (Requires Restart)", value: ref Serialized.BlockTelemetry, ref NonSerialized.DeltaBlockTelemetry, () => 
+            {
+                // TODO:
+                // Implement this functionality. Try to make it so that the changes are applied during runtime
+            });
 
             GUILayout.FlexibleSpace();
             Templates.Button.DrawRounded("Kill All Enemies", onClick: Cheats.KillAllEnemies);
@@ -197,7 +202,10 @@ namespace BagOfTricks.UI
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
-            Templates.Toggle.Draw("Enable Godmode", value: ref Serialized.GodModeEnabled);
+            Templates.Toggle.Draw("Enable Godmode", ref Serialized.GodModeEnabled, ref NonSerialized.DeltaGodmodeEnabled, () => 
+            {
+                Cheats.ToggleGodMode(Serialized.GodModeEnabled);
+            });
 
             GUILayout.FlexibleSpace();
 
@@ -207,7 +215,9 @@ namespace BagOfTricks.UI
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
-            Templates.Toggle.Draw("Enable Invisibility", value: ref Serialized.InvisibilityEnabled);
+            Templates.Toggle.Draw("Enable Invisibility", ref Serialized.InvisibilityEnabled, ref NonSerialized.DeltaInvisibilityEnabled, () => {
+                Cheats.ToggleInvisibility(Serialized.InvisibilityEnabled);
+            });
 
             GUILayout.EndHorizontal();
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
@@ -235,13 +245,15 @@ namespace BagOfTricks.UI
             string[] cNames = NonSerialized.s_PartyMembers.GetNames();
             for (int i = 0; i < cNames.Length; i++)
             {
-                Game.PartyMemberAI partyMember = NonSerialized.s_PartyMembers[i];
+                PartyMemberAI partyMember = NonSerialized.s_PartyMembers[i];
 
                 GUILayout.Space(15);
 
                 GUILayout.FlexibleSpace();
-                GUIStyle nameLabelStyle = new(Styles.GUIStyles.LabelStyle);
-                nameLabelStyle.alignment = TextAnchor.MiddleCenter;
+                GUIStyle nameLabelStyle = new(Styles.GUIStyles.LabelStyle)
+                {
+                    alignment = TextAnchor.MiddleCenter
+                };
                 nameLabelStyle.margin.left = (int)Styles.Dimensions.DefaultHeaderLabelWidth;
                 nameLabelStyle.normal.background = Styles.Textures.squareTexture;
 
@@ -349,15 +361,15 @@ namespace BagOfTricks.UI
 
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
 
-            DrawMovementSlider("Run Speed:", textFieldStyle, ref Serialized.RunSpeed, ref Serialized.DefaultRunSpeed);
+            DrawMovementSlider("Run Speed:", textFieldStyle, ref Serialized.RunSpeed, ref NonSerialized.DefaultRunSpeed);
 
             GUILayout.Space(8f);
 
-            DrawMovementSlider("Walk Speed:", textFieldStyle, ref Serialized.WalkSpeed, ref Serialized.DefaultWalkSpeed);
+            DrawMovementSlider("Walk Speed:", textFieldStyle, ref Serialized.WalkSpeed, ref NonSerialized.DefaultWalkSpeed);
 
             GUILayout.Space(8f);
 
-            DrawMovementSlider("Stealth Speed:", textFieldStyle, ref Serialized.StealthSpeed, ref Serialized.DefaultStealthSpeed);
+            DrawMovementSlider("Stealth Speed:", textFieldStyle, ref Serialized.StealthSpeed, ref NonSerialized.DefaultStealthSpeed);
         }
 
         private static void DrawMovementSlider(string label, GUIStyle style, ref float value, ref float defaultValue)
@@ -393,9 +405,9 @@ namespace BagOfTricks.UI
 
             var defaultAlignment = GUI.skin.label.alignment;
             GUI.skin.label.alignment = TextAnchor.UpperLeft;
-            GUILayout.Label(Serialized.MinMovementSpeed.ToString());
+            GUILayout.Label(NonSerialized.MinMovementSpeed.ToString());
             GUI.skin.label.alignment = TextAnchor.UpperRight;
-            GUILayout.Label(Serialized.MaxMovementSpeed.ToString());
+            GUILayout.Label(NonSerialized.MaxMovementSpeed.ToString());
             GUI.skin.label.alignment = defaultAlignment;
             GUILayout.EndHorizontal();
         }
