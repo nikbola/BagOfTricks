@@ -98,6 +98,13 @@ namespace BagOfTricks.Core
                 return;
 
             component.currencyTotalValue.amount += value;
+
+            // The audio player needs an item to determine what sound it should play, so we have to create a temporary one
+            GameObject tempItem = new GameObject("Temp_Item", typeof(Item));
+            Item item = tempItem.GetComponent<Item>();
+            item.InventoryDragDropSound = Item.UIDragDropSoundType.Loot_Keys;
+            GlobalAudioPlayer.Instance.Play(item, GlobalAudioPlayer.UIInventoryAction.PickUpItem);
+            Object.Destroy(tempItem);
         }
     }
 }
