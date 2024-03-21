@@ -45,11 +45,8 @@ namespace BagOfTricks.Core
         /// <param name="enabled">Whether to enable or disable</param>
         public static void ToggleGodMode(bool enabled)
         {
-            Debug.Logger.Write<Info>("God mode toggle: " + enabled);
             if (NonSerialized.s_PartyMembers.IsNullOrEmpty())
                 return;
-
-            Debug.Logger.Write<Info>("Not null or empty");
 
             PartyMemberAI[] arr = NonSerialized.s_PartyMembers;
             foreach (PartyMemberAI partyMemberAI in arr)
@@ -60,6 +57,8 @@ namespace BagOfTricks.Core
                     
                 component.TakesDamage = !enabled;
             }
+
+            Debug.Logger.Write<Success>("Successfully toggled god mode");
         }
 
         /// <summary>
@@ -77,10 +76,11 @@ namespace BagOfTricks.Core
             {
                 Health component = partyMemberAI.GetComponent<Health>();
                 if (component == null)
-                    return;
+                    continue;
 
                 component.Targetable = !invisible;
             }
+            Debug.Logger.Write<Success>("Successfully toggled invisibility");
         }
 
         /// <summary>
@@ -105,6 +105,8 @@ namespace BagOfTricks.Core
             item.InventoryDragDropSound = Item.UIDragDropSoundType.Loot_Keys;
             GlobalAudioPlayer.Instance.Play(item, GlobalAudioPlayer.UIInventoryAction.PickUpItem);
             Object.Destroy(tempItem);
+
+            Debug.Logger.Write<Success>($"Successfully added {value} copper");
         }
     }
 }
