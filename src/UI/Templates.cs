@@ -49,15 +49,15 @@ namespace BagOfTricks.UI
 
         internal static class Toggle
         {
-            internal static void Draw(string label, ref bool value)
+            internal static void Draw(string label, ref bool value, ref bool previousValue, Action onValueChanged)
             {
                 GUILayout.Label(
                     text: label,
                     style: Styles.GUIStyles.LabelStyle,
-                    options: new GUILayoutOption[] {
+                    options: [
                         GUILayout.Width(300f),
                         GUILayout.Height(Styles.Dimensions.DefaultCategoryElementHeight)
-                    }
+                    ]
                 );
 
                 GUIStyle toggleStyle = value ? Styles.GUIStyles.ToggleStyleEnabled : Styles.GUIStyles.ToggleStyle;
@@ -66,11 +66,17 @@ namespace BagOfTricks.UI
                     value: value,
                     text: value ? "✓" : string.Empty,
                     style: toggleStyle,
-                    options: new GUILayoutOption[] {
+                    options: [
                         GUILayout.Width(40f),
                         GUILayout.Height(Styles.Dimensions.DefaultCategoryElementHeight)
-                    }
+                    ]
                 );
+
+                if (value != previousValue) 
+                {
+                    onValueChanged?.Invoke();
+                    previousValue = value;
+                } 
             }
         }
 
