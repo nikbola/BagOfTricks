@@ -70,6 +70,14 @@ namespace BagOfTricks.UI
         {
             Debug.Logger.Write<Info>("Show UI: " + showUI);
 
+            UICamera uiCamera = FindObjectOfType<UICamera>();            
+            if (uiCamera != null)
+                uiCamera.useMouse = !showUI;
+
+            GameInput gameInput = FindObjectOfType<GameInput>();
+            if (gameInput != null)
+                gameInput.enabled = !showUI;
+
             if (showUI)
             {
                 Core.Stats.ClearPartyMembers();
