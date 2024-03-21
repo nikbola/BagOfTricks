@@ -7,7 +7,7 @@ namespace BagOfTricks.Extensions
     {
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> arr) 
         {
-            return arr == null || arr.Any();
+            return arr == null || !arr.Any();
         }
     }
 }

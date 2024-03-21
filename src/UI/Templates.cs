@@ -54,10 +54,10 @@ namespace BagOfTricks.UI
                 GUILayout.Label(
                     text: label,
                     style: Styles.GUIStyles.LabelStyle,
-                    options: [
+                    options: new GUILayoutOption[] {
                         GUILayout.Width(300f),
                         GUILayout.Height(Styles.Dimensions.DefaultCategoryElementHeight)
-                    ]
+                    }
                 );
 
                 GUIStyle toggleStyle = value ? Styles.GUIStyles.ToggleStyleEnabled : Styles.GUIStyles.ToggleStyle;
@@ -66,10 +66,10 @@ namespace BagOfTricks.UI
                     value: value,
                     text: value ? "✓" : string.Empty,
                     style: toggleStyle,
-                    options: [
+                    options: new GUILayoutOption[] {
                         GUILayout.Width(40f),
                         GUILayout.Height(Styles.Dimensions.DefaultCategoryElementHeight)
-                    ]
+                    }
                 );
 
                 if (value != previousValue) 

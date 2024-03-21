@@ -1,4 +1,6 @@
-﻿using BagOfTricks.Extensions;
+﻿using BagOfTricks.Debug;
+using BagOfTricks.Extensions;
+using BagOfTricks.Storage;
 using Game;
 using UnityEngine;
 
@@ -11,11 +13,13 @@ namespace BagOfTricks.Core
         /// </summary>
         public static void KillAllEnemies()
         {
-            if (!GameState.s_playerCharacter)
+            if (GameState.s_playerCharacter == null)
                 return;
 
             Faction playerFaction = GameState.s_playerCharacter.GetComponent<Faction>();
             Faction[] arr = Object.FindObjectsOfType<Faction>();
+
+            int killCount = 0;
             for (int i = 0; i < arr.Length; i++)
             {
                 Faction enemyFaction = arr[i];
@@ -23,8 +27,11 @@ namespace BagOfTricks.Core
                     continue;
                 
                 Health enemyHealth = enemyFaction.GetComponent<Health>();
-                enemyHealth.KillCheat();
+                enemyHealth?.ApplyDamageDirectly(enemyHealth.CurrentHealth);
+                killCount++;
             }
+
+            Debug.Logger.Write<Success>($"Successfully killed {killCount} enemies");
         }
 
         /// <summary>
@@ -38,10 +45,13 @@ namespace BagOfTricks.Core
         /// <param name="enabled">Whether to enable or disable</param>
         public static void ToggleGodMode(bool enabled)
         {
-            if (Stats.partyMembers.IsNullOrEmpty())
+            Debug.Logger.Write<Info>("God mode toggle: " + enabled);
+            if (NonSerialized.s_PartyMembers.IsNullOrEmpty())
                 return;
 
-            PartyMemberAI[] arr = Stats.partyMembers;
+            Debug.Logger.Write<Info>("Not null or empty");
+
+            PartyMemberAI[] arr = NonSerialized.s_PartyMembers;
             foreach (PartyMemberAI partyMemberAI in arr)
             {
                 Health component = partyMemberAI.GetComponent<Health>();
@@ -59,10 +69,10 @@ namespace BagOfTricks.Core
         /// <param name="invisible">Whether to enable or disable</param>
         public static void ToggleInvisibility(bool invisible)
         {
-            if (Stats.partyMembers.IsNullOrEmpty())
+            if (NonSerialized.s_PartyMembers.IsNullOrEmpty())
                 return;
 
-            PartyMemberAI[] partyMembers = Stats.partyMembers;
+            PartyMemberAI[] partyMembers = NonSerialized.s_PartyMembers;
             foreach (var partyMemberAI in partyMembers)
             {
                 Health component = partyMemberAI.GetComponent<Health>();
