@@ -6,6 +6,8 @@ namespace BagOfTricks.Keybinds
     internal class Keybinds
     {
         public KeyCode toggleMenu = KeyCode.KeypadPlus;
+        public KeyCode killAll = KeyCode.None;
+        public KeyCode toggleGodMode = KeyCode.None;
     }
 
     /* Key codes:

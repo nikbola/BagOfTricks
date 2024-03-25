@@ -25,8 +25,6 @@ namespace BagOfTricks
             {
                 SceneManager.sceneLoaded += OnSceneLoaded;
                 harmonyPatcher.PatchAll();
-                KeybindHandler.Initialize();
-
                 Debug.Logger.Write<Success>($"Successfully loaded mod!");
             }
             catch (System.Exception e)
@@ -54,6 +52,8 @@ namespace BagOfTricks
             var controllerObject = new GameObject("[Bag of Tricks] GUIController", typeof(WindowControls));
             windowControls = controllerObject.GetComponent<WindowControls>();
             DontDestroyOnLoad(controllerObject);
+
+            KeybindHandler.Initialize(windowControls);
         }
     }
 }

@@ -108,6 +108,7 @@ namespace BagOfTricks.UI
 
             Rect mainButtonRect = default;
             Rect logsButtonRect = default;
+            Rect keybindsButtonRect = default;
 
             if (Event.current.type == EventType.Repaint)
             {
@@ -126,11 +127,31 @@ namespace BagOfTricks.UI
                 logsButtonRect = GUILayoutUtility.GetLastRect();
             }
 
+            var separatorRect2 = new Rect(logsButtonRect.xMax, logsButtonRect.y, 2, logsButtonRect.height);
+
+            if (GUILayout.Button("Keybinds", Styles.GUIStyles.TopBarButtonStyle, GUILayout.Height(60)))
+            {
+                NonSerialized.s_SelectedTopBarCategory = NonSerialized.TopBarCategory.Keybinds;
+            }
+
+            if (Event.current.type == EventType.repaint)
+            {
+                keybindsButtonRect = GUILayoutUtility.GetLastRect();
+            }
+
             bool isMainSelected = NonSerialized.s_SelectedTopBarCategory == NonSerialized.TopBarCategory.Main;
             Rect selectedRect = isMainSelected ? mainButtonRect : logsButtonRect;
 
+            if (NonSerialized.s_SelectedTopBarCategory == NonSerialized.TopBarCategory.Main)
+                selectedRect = mainButtonRect;
+            else if (NonSerialized.s_SelectedTopBarCategory == NonSerialized.TopBarCategory.Logs)
+                selectedRect = logsButtonRect;
+            else if (NonSerialized.s_SelectedTopBarCategory == NonSerialized.TopBarCategory.Keybinds)
+                selectedRect = keybindsButtonRect;
+
             GUI.color = Styles.Colors.DarkestDark;
             GUI.DrawTexture(separatorRect, Texture2D.whiteTexture);
+            GUI.DrawTexture(separatorRect2, Texture2D.whiteTexture);
             GUI.color = Color.white;
 
             var selectionRect = new Rect(selectedRect.x, selectedRect.yMax - 1, selectedRect.width, 2);
@@ -149,9 +170,11 @@ namespace BagOfTricks.UI
 
             if (NonSerialized.s_SelectedTopBarCategory == NonSerialized.TopBarCategory.Main)
                 DrawMainUI();
-            else
+            else if (NonSerialized.s_SelectedTopBarCategory == NonSerialized.TopBarCategory.Logs)
                 DrawLogUI();
-            
+            else 
+                DrawKeybindsUI();
+
             GUILayout.EndScrollView();
             GUI.DragWindow();
         }
@@ -185,6 +208,24 @@ namespace BagOfTricks.UI
                 var style = new GUIStyle(Styles.GUIStyles.LogStyle);
                 style.normal.textColor = logEntries[i].logColor;
                 GUILayout.Label(logEntries[i].logMessage, style, GUILayout.Width(960 - 20));
+            }
+        }
+
+        private void DrawKeybindsUI()
+        {
+            var keybindActions = KeybindHandler.s_KeybindActions;
+            foreach (var keybind in keybindActions)
+            {
+                GUILayout.Space(20);
+                GUILayout.BeginHorizontal();
+                var style = new GUIStyle(Styles.GUIStyles.LogStyle);
+                style.normal.textColor = Color.white;
+                GUILayout.Label(keybind.Value.actionName, style, GUILayout.Width((960 - 20) / 2));
+                GUILayout.Label(keybind.Key.ToString(), style);
+                Templates.Button.DrawRounded("Change", onClick: () => {
+                    KeybindHandler.RegisterKeybindChange(keybind);
+                });
+                GUILayout.EndHorizontal();
             }
         }
 
