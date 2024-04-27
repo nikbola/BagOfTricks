@@ -1,8 +1,6 @@
-﻿using BagOfTricks.Core;
-using BagOfTricks.Debug;
+﻿using BagOfTricks.Debug;
 using BagOfTricks.Extensions;
 using BagOfTricks.Meta;
-using BagOfTricks.Storage;
 using BagOfTricks.UI;
 using BepInEx;
 using System;
@@ -21,7 +19,7 @@ namespace BagOfTricks.Keybinds
 
         public static readonly string s_KeybindsPath = Path.Combine(Paths.PluginPath, RelPaths.KEYBINDS_FILE);
 
-        private static List<KeyCode> s_PressedKeys = new List<KeyCode>();
+        private static readonly List<KeyCode> s_PressedKeys = new List<KeyCode>();
 
         private static WindowControls s_window;
 
@@ -93,7 +91,6 @@ namespace BagOfTricks.Keybinds
 
         private static void PopulateKeybindActions()
         {
-            Debug.Logger.Write<Info>(s_Keybinds.toggleMenu);
             s_KeybindActions = new()
             {
                 { s_Keybinds.toggleMenu, new("Toggle Menu", WindowControls.ToggleUI) }
