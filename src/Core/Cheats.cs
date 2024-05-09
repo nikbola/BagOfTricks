@@ -62,6 +62,27 @@ namespace BagOfTricks.Core
         }
 
         /// <summary>
+        /// Enables or disables God Mode. In God Mode the character can not take damage.
+        /// </summary>
+        public static void ToggleGodMode()
+        {
+            if (NonSerialized.s_PartyMembers.IsNullOrEmpty())
+                return;
+
+            PartyMemberAI[] arr = NonSerialized.s_PartyMembers;
+            foreach (PartyMemberAI partyMemberAI in arr)
+            {
+                Health component = partyMemberAI.GetComponent<Health>();
+                if (component == null)
+                    continue;
+
+                component.TakesDamage = !component.TakesDamage;
+            }
+
+            Debug.Logger.Write<Success>("Successfully toggled god mode");
+        }
+
+        /// <summary>
         /// Makes the player "invisible" to enemies, and completely untargetable. This differs from God Mode in the sense that 
         /// in God Mode, you can still be attacked, but don't take any damage.
         /// </summary>
@@ -79,6 +100,28 @@ namespace BagOfTricks.Core
                     continue;
 
                 component.Targetable = !invisible;
+            }
+            Debug.Logger.Write<Success>("Successfully toggled invisibility");
+        }
+
+        /// <summary>
+        /// Makes the player "invisible" to enemies, and completely untargetable. This differs from God Mode in the sense that 
+        /// in God Mode, you can still be attacked, but don't take any damage.
+        /// </summary>
+        /// <param name="invisible">Whether to enable or disable</param>
+        public static void ToggleInvisibility()
+        {
+            if (NonSerialized.s_PartyMembers.IsNullOrEmpty())
+                return;
+
+            PartyMemberAI[] partyMembers = NonSerialized.s_PartyMembers;
+            foreach (var partyMemberAI in partyMembers)
+            {
+                Health component = partyMemberAI.GetComponent<Health>();
+                if (component == null)
+                    continue;
+
+                component.Targetable = !component.Targetable;
             }
             Debug.Logger.Write<Success>("Successfully toggled invisibility");
         }

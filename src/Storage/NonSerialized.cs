@@ -8,12 +8,9 @@ namespace BagOfTricks.Storage
     {
         internal static string s_AddCurrencyAmount = "500";
         internal static Vector2 s_ScrollPosition = Vector2.zero;
-
         internal static PartyMemberAI[] s_PartyMembers = new PartyMemberAI[0];
         internal static Mover[] s_Movers = new Mover[0];
-
         internal static TopBarCategory s_SelectedTopBarCategory = TopBarCategory.Main;
-
         internal static List<Tuple<string, string, string>> s_AchievementInfo = new List<Tuple<string, string, string>>();
 
 #region Movement
@@ -33,7 +30,8 @@ namespace BagOfTricks.Storage
         public enum TopBarCategory 
         {
             Main,
-            Logs
+            Logs,
+            Keybinds
         }
     }
 }

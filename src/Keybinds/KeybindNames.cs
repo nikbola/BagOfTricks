@@ -2,10 +2,14 @@
 
 namespace BagOfTricks.Keybinds
 {
-    [System.Serializable]
-    internal class Keybinds
+    internal static class KeybindNames
     {
-        public KeyCode toggleMenu = KeyCode.KeypadPlus;
+        public static string s_toggleMenu = "Toggle Menu";
+        public static string s_killAllEnemies = "Kill All Enemies";
+        public static string s_toggleGodmode = "Toggle God Mode";
+        public static string s_clearFog = "Clear Fog";
+        public static string s_toggleInvisibility = "Toggle Invisibility";
+        public static string s_addCurrency = "Add Currency";
     }
 
     /* Key codes:
