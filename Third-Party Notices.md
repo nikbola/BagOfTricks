@@ -5,7 +5,7 @@ This project includes components from other software projects, and those compone
 ---
 
 ### Newtonsoft.Json
-Source: https://github.com/JamesNK/Newtonsoft.Json
+Source: https://github.com/JamesNK/Newtonsoft.Json \
 License:
 The MIT License (MIT)
 
