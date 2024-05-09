@@ -113,7 +113,7 @@ namespace BagOfTricks.Keybinds
                 { KeyCode.Keypad2, new(KeyCode.Keypad2, toggleGodmode, s_actionLookup[toggleGodmode]) },
                 { KeyCode.Keypad3, new(KeyCode.Keypad3, clearFog, s_actionLookup[clearFog]) },
                 { KeyCode.Keypad4, new(KeyCode.Keypad4, toggleInvisibility, s_actionLookup[toggleInvisibility]) },
-                { KeyCode.Keypad4, new(KeyCode.Keypad4, addCurrency, s_actionLookup[addCurrency]) },
+                { KeyCode.Keypad5, new(KeyCode.Keypad5, addCurrency, s_actionLookup[addCurrency]) },
             };
         }
 
