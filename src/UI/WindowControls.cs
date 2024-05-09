@@ -218,11 +218,32 @@ namespace BagOfTricks.UI
             {
                 GUILayout.Space(20);
                 GUILayout.BeginHorizontal();
+
                 var style = new GUIStyle(Styles.GUIStyles.LogStyle);
-                style.normal.textColor = Color.white;
+                bool isEditing = keybind.Value.actionName == KeybindHandler.EditingKeybindName;
+
+                Color textColor;
+                string keybindValue;
+                string buttonText;
+
+                if (isEditing)
+                {
+                    textColor = Styles.Colors.WarningYellow;
+                    keybindValue = "Waiting for input...";
+                    buttonText = "Waiting...";
+                }
+                else
+                {
+                    textColor = Color.white;
+                    keybindValue = keybind.Key.ToString();
+                    buttonText = "Change";
+                }
+
+                style.normal.textColor = textColor;
                 GUILayout.Label(keybind.Value.actionName, style, GUILayout.Width((960 - 20) / 2));
-                GUILayout.Label(keybind.Key.ToString(), style);
-                Templates.Button.DrawRounded("Change", onClick: () => {
+                GUILayout.Label(keybindValue, style);
+
+                Templates.Button.DrawRounded(buttonText, onClick: () => {
                     KeybindHandler.RegisterKeybindChange(keybind);
                 });
                 GUILayout.EndHorizontal();
