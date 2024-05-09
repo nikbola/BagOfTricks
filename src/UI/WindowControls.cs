@@ -2,6 +2,7 @@
 using BagOfTricks.Debug;
 using BagOfTricks.Extensions;
 using BagOfTricks.Keybinds;
+using BagOfTricks.src.Storage;
 using BagOfTricks.Storage;
 using BepInEx;
 using Game;
@@ -43,6 +44,7 @@ namespace BagOfTricks.UI
             {
                 Debug.Logger.ValidatePaths();
                 Styles.Initialize();
+                Serialized.Instance = PersistenceHelper.Retreive<Serialized>();
                 OnWindowStateChanged += HandleWindowStateChange;
             }
             catch (System.Exception e)
@@ -54,6 +56,9 @@ namespace BagOfTricks.UI
         public static void ToggleUI()
         {
             ShowUI = !ShowUI;
+
+            if (!ShowUI)
+                PersistenceHelper.Store(Serialized.Instance);
         }
 
         private void OnGUI()
@@ -259,7 +264,7 @@ namespace BagOfTricks.UI
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
-            Templates.Toggle.Draw("Block Telemetry (Requires Restart)", value: ref Serialized.BlockTelemetry, ref NonSerialized.DeltaBlockTelemetry, () => 
+            Templates.Toggle.Draw("Block Telemetry (Requires Restart)", value: ref Serialized.Instance.BlockTelemetry, ref NonSerialized.DeltaBlockTelemetry, () => 
             {
                 // TODO:
                 // Implement this functionality. Try to make it so that the changes are applied during runtime
@@ -272,9 +277,9 @@ namespace BagOfTricks.UI
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
-            Templates.Toggle.Draw("Enable Godmode", ref Serialized.GodModeEnabled, ref NonSerialized.DeltaGodmodeEnabled, () => 
+            Templates.Toggle.Draw("Enable Godmode", ref Serialized.Instance.GodModeEnabled, ref NonSerialized.DeltaGodmodeEnabled, () => 
             {
-                Cheats.ToggleGodMode(Serialized.GodModeEnabled);
+                Cheats.ToggleGodMode(Serialized.Instance.GodModeEnabled);
             });
 
             GUILayout.FlexibleSpace();
@@ -285,8 +290,8 @@ namespace BagOfTricks.UI
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
             GUILayout.BeginHorizontal();
 
-            Templates.Toggle.Draw("Enable Invisibility", ref Serialized.InvisibilityEnabled, ref NonSerialized.DeltaInvisibilityEnabled, () => {
-                Cheats.ToggleInvisibility(Serialized.InvisibilityEnabled);
+            Templates.Toggle.Draw("Enable Invisibility", ref Serialized.Instance.InvisibilityEnabled, ref NonSerialized.DeltaInvisibilityEnabled, () => {
+                Cheats.ToggleInvisibility(Serialized.Instance.InvisibilityEnabled);
             });
 
             GUILayout.EndHorizontal();
@@ -431,15 +436,15 @@ namespace BagOfTricks.UI
 
             GUILayout.Space(Styles.Dimensions.VerticalSpaceBetweenItems);
 
-            DrawMovementSlider("Run Speed:", textFieldStyle, ref Serialized.RunSpeed, ref NonSerialized.DefaultRunSpeed);
+            DrawMovementSlider("Run Speed:", textFieldStyle, ref Serialized.Instance.RunSpeed, ref NonSerialized.DefaultRunSpeed);
 
             GUILayout.Space(8f);
 
-            DrawMovementSlider("Walk Speed:", textFieldStyle, ref Serialized.WalkSpeed, ref NonSerialized.DefaultWalkSpeed);
+            DrawMovementSlider("Walk Speed:", textFieldStyle, ref Serialized.Instance.WalkSpeed, ref NonSerialized.DefaultWalkSpeed);
 
             GUILayout.Space(8f);
 
-            DrawMovementSlider("Stealth Speed:", textFieldStyle, ref Serialized.StealthSpeed, ref NonSerialized.DefaultStealthSpeed);
+            DrawMovementSlider("Stealth Speed:", textFieldStyle, ref Serialized.Instance.StealthSpeed, ref NonSerialized.DefaultStealthSpeed);
         }
 
         private static void DrawMovementSlider(string label, GUIStyle style, ref float value, ref float defaultValue)

@@ -1,16 +1,18 @@
-﻿namespace BagOfTricks.Storage
+﻿using UnityEngine;
+
+namespace BagOfTricks.Storage
 {
     [System.Serializable]
-    internal static class Serialized
+    internal class Serialized
     {
-        public static bool BlockTelemetry = false;
-        public static bool GodModeEnabled = false;
-        public static bool InvisibilityEnabled = false;
-        
-        public static float RunSpeed = 8f;
+        public static Serialized Instance = new Serialized();
 
-        public static float WalkSpeed = 4f;
+        public bool BlockTelemetry = false;
+        public bool GodModeEnabled = false;
+        public bool InvisibilityEnabled = false;
 
-        public static float StealthSpeed = 2.5f;
+        public float RunSpeed = 8f;
+        public float WalkSpeed = 4f;
+        public float StealthSpeed = 2.5f;
     }
 }
