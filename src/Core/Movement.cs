@@ -24,9 +24,9 @@ namespace BagOfTricks.Core
             for (int i = 0; i < NonSerialized.s_Movers.Length; i++)
             {
                 Mover mover = NonSerialized.s_Movers[i];
-                mover.SetRunSpeed(Serialized.RunSpeed);
-                mover.SetWalkSpeed(Serialized.WalkSpeed);
-                mover.StealthSpeed = Serialized.StealthSpeed;
+                mover.SetRunSpeed(Serialized.Instance.RunSpeed);
+                mover.SetWalkSpeed(Serialized.Instance.WalkSpeed);
+                mover.StealthSpeed = Serialized.Instance.StealthSpeed;
             }
         }
     }
